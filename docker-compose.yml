@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  # api:
+  #   build: 
+  #     context: ./api
+  #     dockerfile: Dockerfile.local
+  #   container_name: twitter-trends.api
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - ./api/app:/go/src/github.com/44taka/twitter-trends
+  #   tty:
+  #     true
+  batch:
+    build: 
+      context: ../twitter-trends-batch
+      dockerfile: Dockerfile.local
+    container_name: twitter-trends-docker.batch
+    volumes:
+      - ../twitter-trends-batch/app:/app
+    tty:
+      true
+  # front: TODO
+  postgres:
+    image: postgres:14.3
+    container_name: twitter-trends-docker.postgres
+    environment:
+      TZ: Asia/Tokyo
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: twitter_trends
+    ports:
+      - 5432:5432 
+    volumes:
+      - ./postgres/init:/docker-entrypoint-initdb.d
+  postgres-test:
+    image: postgres:14.3
+    container_name: twitter-trends-docker.postgres-test
+    environment:
+      TZ: Asia/Tokyo
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: twitter_trends
+    ports:
+      - 54321:5432 
+    volumes:
+      - ./postgres/init:/docker-entrypoint-initdb.d
